@@ -35,7 +35,7 @@ Your Agent (OpenAI client)
 ### 1. Get the proxy
 
 ```bash
-git clone https://github.com/yourusername/trandor-proxy
+git clone https://github.com/matk0/trandor-proxy
 cd trandor-proxy
 npm install
 ```

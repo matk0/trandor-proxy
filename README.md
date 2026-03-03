@@ -16,7 +16,7 @@ Your App → trandor-proxy → Trandor → AI Providers
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/yourusername/trandor-proxy
+git clone https://github.com/matk0/trandor-proxy
 cd trandor-proxy
 npm install
 ```
