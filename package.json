@@ -1,0 +1,23 @@
+{
+  "name": "trandor-proxy",
+  "version": "1.0.0",
+  "description": "OpenAI-compatible proxy for Trandor - pay for AI with Bitcoin Lightning via NWC",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "trandor",
+    "openai",
+    "proxy",
+    "bitcoin",
+    "lightning",
+    "nwc",
+    "nostr"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
