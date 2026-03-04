@@ -1,4 +1,21 @@
 const express = require('express');
+const { readFileSync } = require('fs');
+const { resolve } = require('path');
+
+// Load .env file if present
+try {
+  const envPath = resolve(__dirname, '.env');
+  const envContent = readFileSync(envPath, 'utf8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx === -1) continue;
+    const key = trimmed.slice(0, eqIdx);
+    const value = trimmed.slice(eqIdx + 1);
+    if (!process.env[key]) process.env[key] = value;
+  }
+} catch {}
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -42,6 +59,31 @@ app.post('/v1/chat/completions', async (req, res) => {
     });
 
     // Forward cost headers
+    const costHeaders = ['X-Charged-Sats', 'X-Cost-Sats', 'X-Cost-USD', 'X-Refund-Sats', 'X-Refund-Status'];
+    costHeaders.forEach(header => {
+      const value = response.headers.get(header);
+      if (value) res.set(header, value);
+    });
+
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (error) {
+    res.status(502).json({ error: 'Failed to reach Trandor', details: error.message });
+  }
+});
+
+// Forward POST /v1/responses with NWC header (OpenAI Responses API)
+app.post('/v1/responses', async (req, res) => {
+  try {
+    const response = await fetch(`${TRANDOR_BASE_URL}/v1/responses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-NWC': TRANDOR_NWC,
+      },
+      body: JSON.stringify(req.body),
+    });
+
     const costHeaders = ['X-Charged-Sats', 'X-Cost-Sats', 'X-Cost-USD', 'X-Refund-Sats', 'X-Refund-Status'];
     costHeaders.forEach(header => {
       const value = response.headers.get(header);
